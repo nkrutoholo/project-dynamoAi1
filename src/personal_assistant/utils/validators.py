@@ -30,3 +30,4 @@ def validate_birthday(date_str: str) -> bool:
         return True
     except ValueError:
         return False
+    

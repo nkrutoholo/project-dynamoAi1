@@ -28,3 +28,4 @@ def get_notes_file() -> Path:
 def get_history_file() -> Path:
     return get_data_dir() / HISTORY_FILE_NAME
 
+
