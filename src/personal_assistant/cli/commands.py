@@ -199,13 +199,13 @@ class App:
         return f"Phone updated for '{record.name.value}'."
 
     @input_error
-    def remove_phone(self, args: list[str]) -> str:
+    def delete_phone(self, args: list[str]) -> str:
         return self._update_contact_field(
             args,
             "phone",
             "remove_phone",
-            "Phone to remove: ",
-            action_word="removed",
+            "Phone to delete: ",
+            action_word="deleted",
         )
 
     @input_error
@@ -275,6 +275,42 @@ class App:
             validate_birthday,
             "Birthday must be in format DD.MM.YYYY.",
         )
+
+    @input_error
+    def delete_email(self, args: list[str]) -> str:
+        if not args:
+            name = self._prompt_required_field("Name: ")
+        else:
+            name = " ".join(args).strip()
+        record = self._get_contact_by_name(name)
+        if not record.email:
+            raise ValueError(f"Contact '{record.name.value}' has no email.")
+        record.set_email(None)
+        return f"Email deleted for '{record.name.value}'."
+
+    @input_error
+    def delete_birthday(self, args: list[str]) -> str:
+        if not args:
+            name = self._prompt_required_field("Name: ")
+        else:
+            name = " ".join(args).strip()
+        record = self._get_contact_by_name(name)
+        if not record.birthday:
+            raise ValueError(f"Contact '{record.name.value}' has no birthday.")
+        record.set_birthday(None)
+        return f"Birthday deleted for '{record.name.value}'."
+
+    @input_error
+    def delete_address(self, args: list[str]) -> str:
+        if not args:
+            name = self._prompt_required_field("Name: ")
+        else:
+            name = " ".join(args).strip()
+        record = self._get_contact_by_name(name)
+        if not record.address:
+            raise ValueError(f"Contact '{record.name.value}' has no address.")
+        record.set_address(None)
+        return f"Address deleted for '{record.name.value}'."
 
     @input_error
     def all_contacts(self, _: list[str]) -> str:
@@ -500,6 +536,16 @@ class App:
         )
         return format_notes(sorted_notes)
 
+    @input_error
+    def list_tags(self, _: list[str]) -> str:
+        all_tags: set[str] = set()
+        for note in self.notes_book.all_notes():
+            for tag in note.tags:
+                all_tags.add(tag.value)
+        if not all_tags:
+            return "No tags found."
+        return "Tags: " + ", ".join(sorted(all_tags))
+
     def _show_help(self) -> None:
         self.console.print("[bold cyan]Personal Assistant[/bold cyan]")
         self.console.print("Available commands:")
@@ -512,13 +558,16 @@ class App:
         self.console.print("  find-contact <query>")
         self.console.print("  add-phone <name> <phone>")
         self.console.print("  edit-phone <name> <old_phone> <new_phone>")
-        self.console.print("  remove-phone <name> <phone>")
+        self.console.print("  delete-phone <name> <phone>")
         self.console.print("  add-email <name> <email>")
         self.console.print("  edit-email <name> <email>")
         self.console.print("  add-address <name> <address>")
         self.console.print("  edit-address <name> <address>")
         self.console.print("  add-birthday <name> <birthday: DD.MM.YYYY>")
         self.console.print("  edit-birthday <name> <birthday: DD.MM.YYYY>")
+        self.console.print("  delete-email <name>")
+        self.console.print("  delete-birthday <name>")
+        self.console.print("  delete-address <name>")
         self.console.print("  birthdays <days>")
         self.console.print('  add-note "<text>" [tag1] [tag2] ...')
         self.console.print("  show-note <id>")
@@ -532,6 +581,7 @@ class App:
         self.console.print("  has-tag <id> <tag>")
         self.console.print("  find-by-tag <tag>")
         self.console.print("  sort-notes-by-tags")
+        self.console.print("  list-tags")
         self.console.print("  exit | quit | close")
         self.console.print("[dim]Tip: press Esc while entering a field to cancel the current command.[/dim]")
 
@@ -552,7 +602,7 @@ class App:
             "find-contact": self.find_contact,
             "add-phone": self.add_phone,
             "edit-phone": self.edit_phone,
-            "remove-phone": self.remove_phone,
+            "delete-phone": self.delete_phone,
             "add-email": self.add_email,
             "edit-email": self.edit_email,
             "add-address": self.add_address,
@@ -560,6 +610,9 @@ class App:
             "add-birthday": self.add_birthday,
             "edit-birthday": self.edit_birthday,
             "birthdays": self.birthdays,
+            "delete-email": self.delete_email,
+            "delete-birthday": self.delete_birthday,
+            "delete-address": self.delete_address,
             "add-note": self.add_note,
             "show-note": self.show_note,
             "edit-note": self.edit_note,
@@ -572,6 +625,7 @@ class App:
             "has-tag": self.has_tag,
             "find-by-tag": self.find_by_tag,
             "sort-notes-by-tags": self.sort_notes_by_tags,
+            "list-tags": self.list_tags,
         }
 
         while True:

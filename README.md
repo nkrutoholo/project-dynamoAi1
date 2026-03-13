@@ -34,13 +34,16 @@ python -m personal_assistant
 | `find-contact <query>` | Пошук контактів |
 | `add-phone <name> <phone>` | Додати телефон |
 | `edit-phone <name> <old> <new>` | Змінити телефон |
-| `remove-phone <name> <phone>` | Видалити телефон |
+| `delete-phone <name> <phone>` | Видалити телефон |
 | `add-email <name> <email>` | Додати email |
 | `edit-email <name> <email>` | Змінити email |
+| `delete-email <name>` | Видалити email |
 | `add-address <name> <address>` | Додати адресу |
 | `edit-address <name> <address>` | Змінити адресу |
+| `delete-address <name>` | Видалити адресу |
 | `add-birthday <name> <DD.MM.YYYY>` | Додати день народження |
 | `edit-birthday <name> <DD.MM.YYYY>` | Змінити день народження |
+| `delete-birthday <name>` | Видалити день народження |
 | `birthdays <days>` | Найближчі дні народження |
 
 ### Нотатки
@@ -59,6 +62,7 @@ python -m personal_assistant
 | `has-tag <id> <tag>` | Перевірити наявність тегу |
 | `find-by-tag <tag>` | Знайти нотатки за тегом |
 | `sort-notes-by-tags` | Сортувати нотатки за тегами |
+| `list-tags` | Список всіх тегів |
 
 ### Інше
 
