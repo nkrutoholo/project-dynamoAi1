@@ -15,7 +15,7 @@ def validate_address(address: str) -> bool:
 
 
 def validate_phone(phone: str) -> bool:
-    pattern = r"^(\+380\d{9}|\d{10})$"
+    pattern = r"^(\+380\d{9}|0\d{9})$"
     return bool(re.fullmatch(pattern, phone.strip()))
 
 
