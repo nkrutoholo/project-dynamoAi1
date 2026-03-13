@@ -31,8 +31,9 @@ def validate_birthday(date_str: str) -> bool:
         return dt <= datetime.now().date()
     except ValueError:
         return False
-    
-def validate_note_text(value: str) -> str:    
+
+
+def validate_note_text(value: str) -> str:
     if not isinstance(value, str):
         raise ValueError("Note text must be a string.")
 
@@ -59,10 +60,8 @@ def validate_tag(value: str) -> str:
     if len(normalized) > 30:
         raise ValueError("Tag is too long. Maximum length is 30 characters.")
 
-    if not re.fullmatch(r"[a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9_-]+", normalized):
-        raise ValueError(
-            "Tag may contain only letters, digits, underscore and hyphen."
-        )
+    if not re.fullmatch(r"[a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9_-]+", normalized):  # noqa: RUF001
+        raise ValueError("Tag may contain only letters, digits, underscore and hyphen.")
 
     return normalized
 

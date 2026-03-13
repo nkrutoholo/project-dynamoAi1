@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from collections import UserDict
+from collections.abc import Iterable
 from datetime import date, datetime
-from typing import Iterable
 
 from personal_assistant.constants import DATE_FORMAT
 from personal_assistant.models.record import Record
@@ -45,13 +45,16 @@ class AddressBook(UserDict):
             delta = (nearest - today).days
             if 0 <= delta <= days:
                 upcoming.append(record)
-        return sorted(upcoming, key=lambda item: datetime.strptime(item.birthday.value, DATE_FORMAT).month if item.birthday else 13)
+        return sorted(
+            upcoming,
+            key=lambda item: datetime.strptime(item.birthday.value, DATE_FORMAT).month if item.birthday else 13,
+        )
 
     def to_list(self) -> list[dict]:
         return [record.to_dict() for record in self.all_records()]
 
     @classmethod
-    def from_list(cls, items: Iterable[dict]) -> "AddressBook":
+    def from_list(cls, items: Iterable[dict]) -> AddressBook:
         book = cls()
         for item in items:
             book.add_record(Record.from_dict(item))

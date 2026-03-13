@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def format_contacts(contacts: Iterable) -> str:

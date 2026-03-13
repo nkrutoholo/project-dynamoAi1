@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from personal_assistant.models.note import Note
-
 from personal_assistant.utils.validators import validate_note_id
 
 
@@ -54,7 +53,7 @@ class NotesBook:
         return [note.to_dict() for note in self._notes]
 
     @classmethod
-    def from_list(cls, items: list[dict]) -> "NotesBook":
+    def from_list(cls, items: list[dict]) -> NotesBook:
         book = cls()
 
         for item in items:

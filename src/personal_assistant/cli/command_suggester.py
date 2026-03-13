@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from difflib import get_close_matches
 
 from personal_assistant.cli.completer import COMMANDS
