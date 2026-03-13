@@ -30,7 +30,7 @@ class App:
         bindings = KeyBindings()
         cancel_token = "__CANCEL_INPUT__"
 
-        @bindings.add("escape")
+        @bindings.add("escape", eager=True)
         def _(event):
             event.app.exit(result=cancel_token)
 
@@ -575,7 +575,14 @@ class App:
         }
 
         while True:
-            user_input = prompt(">>> ", completer=command_completer, history=self.history)
+            try:
+                user_input = prompt(">>> ", completer=command_completer, history=self.history)
+            except (KeyboardInterrupt, EOFError):
+                # graceful exit: always save data on Ctrl+C or unexpected crash
+                self._save_all()
+                self.console.print("\n[bold red]Good bye![/bold red]")
+                break
+
             command, args = parse_input(user_input)
 
             if not command:
