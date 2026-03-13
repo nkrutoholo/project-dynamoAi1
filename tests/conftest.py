@@ -12,10 +12,10 @@ for path in (ROOT_DIR, SRC_DIR):
     if path_str not in sys.path:
         sys.path.insert(0, path_str)
 
-from personal_assistant.books.address_book import AddressBook
-from personal_assistant.books.notes_book import NotesBook
-from personal_assistant.models.note import Note
-from personal_assistant.models.record import Record
+from personal_assistant.books.address_book import AddressBook  # noqa: E402
+from personal_assistant.books.notes_book import NotesBook  # noqa: E402
+from personal_assistant.models.note import Note  # noqa: E402
+from personal_assistant.models.record import Record  # noqa: E402
 
 
 @pytest.fixture

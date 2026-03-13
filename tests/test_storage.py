@@ -50,11 +50,13 @@ class TestLoadRaw:
     def test_load_empty_json(self, storage_dir):
         JsonStorage.ensure_environment()
         from personal_assistant.constants import get_contacts_file
+
         data = JsonStorage.load_raw(get_contacts_file())
         assert data == []
 
     def test_load_valid_data(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('[{"name": "Alice"}]', encoding="utf-8")
@@ -64,6 +66,7 @@ class TestLoadRaw:
 
     def test_load_corrupted_json(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("{broken json!!!", encoding="utf-8")
@@ -72,6 +75,7 @@ class TestLoadRaw:
 
     def test_load_non_list_json(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('{"key": "value"}', encoding="utf-8")
@@ -82,12 +86,14 @@ class TestLoadRaw:
 class TestSaveRaw:
     def test_save_creates_file(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         JsonStorage.save_raw(path, [{"name": "Test"}])
         assert path.exists()
 
     def test_save_writes_valid_json(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         JsonStorage.save_raw(path, [{"name": "Test"}])
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -95,6 +101,7 @@ class TestSaveRaw:
 
     def test_atomic_write_no_tmp_left(self, storage_dir):
         from personal_assistant.constants import get_contacts_file
+
         path = get_contacts_file()
         JsonStorage.save_raw(path, [{"name": "Test"}])
         assert not path.with_suffix(".tmp").exists()

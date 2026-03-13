@@ -3,21 +3,19 @@ from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
 from rich.console import Console
 
-from personal_assistant.books.address_book import AddressBook
-from personal_assistant.books.notes_book import NotesBook
-from personal_assistant.cli.parser import parse_input
 from personal_assistant.cli.command_suggester import suggest_command
 from personal_assistant.cli.completer import command_completer
-from personal_assistant.storage.json_storage import JsonStorage
-from personal_assistant.models.record import Record
+from personal_assistant.cli.parser import parse_input
 from personal_assistant.models.note import Note
+from personal_assistant.models.record import Record
+from personal_assistant.storage.json_storage import JsonStorage
 from personal_assistant.utils.decorators import input_error
 from personal_assistant.utils.formatters import format_contacts, format_notes
 from personal_assistant.utils.validators import (
     validate_birthday,
     validate_email,
-    validate_phone,
     validate_note_id,
+    validate_phone,
 )
 
 
@@ -164,8 +162,12 @@ class App:
     @input_error
     def add_phone(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "phone", "add_phone", "Phone: ",
-            validate_phone, "Phone must be in format +380XXXXXXXXX or 0XXXXXXXXX.",
+            args,
+            "phone",
+            "add_phone",
+            "Phone: ",
+            validate_phone,
+            "Phone must be in format +380XXXXXXXXX or 0XXXXXXXXX.",
             is_add=True,
         )
 
@@ -199,51 +201,79 @@ class App:
     @input_error
     def remove_phone(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "phone", "remove_phone", "Phone to remove: ",
+            args,
+            "phone",
+            "remove_phone",
+            "Phone to remove: ",
             action_word="removed",
         )
 
     @input_error
     def add_email(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "email", "set_email", "Email: ",
-            validate_email, "Invalid email format.",
-            existing_getter=lambda r: r.email, is_add=True,
+            args,
+            "email",
+            "set_email",
+            "Email: ",
+            validate_email,
+            "Invalid email format.",
+            existing_getter=lambda r: r.email,
+            is_add=True,
         )
 
     @input_error
     def edit_email(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "email", "set_email", "New email: ",
-            validate_email, "Invalid email format.",
+            args,
+            "email",
+            "set_email",
+            "New email: ",
+            validate_email,
+            "Invalid email format.",
         )
 
     @input_error
     def add_address(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "address", "set_address", "Address: ",
-            existing_getter=lambda r: r.address, is_add=True,
+            args,
+            "address",
+            "set_address",
+            "Address: ",
+            existing_getter=lambda r: r.address,
+            is_add=True,
         )
 
     @input_error
     def edit_address(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "address", "set_address", "New address: ",
+            args,
+            "address",
+            "set_address",
+            "New address: ",
         )
 
     @input_error
     def add_birthday(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "birthday", "set_birthday", "Birthday (DD.MM.YYYY): ",
-            validate_birthday, "Birthday must be in format DD.MM.YYYY.",
-            existing_getter=lambda r: r.birthday, is_add=True,
+            args,
+            "birthday",
+            "set_birthday",
+            "Birthday (DD.MM.YYYY): ",
+            validate_birthday,
+            "Birthday must be in format DD.MM.YYYY.",
+            existing_getter=lambda r: r.birthday,
+            is_add=True,
         )
 
     @input_error
     def edit_birthday(self, args: list[str]) -> str:
         return self._update_contact_field(
-            args, "birthday", "set_birthday", "New birthday (DD.MM.YYYY): ",
-            validate_birthday, "Birthday must be in format DD.MM.YYYY.",
+            args,
+            "birthday",
+            "set_birthday",
+            "New birthday (DD.MM.YYYY): ",
+            validate_birthday,
+            "Birthday must be in format DD.MM.YYYY.",
         )
 
     @input_error

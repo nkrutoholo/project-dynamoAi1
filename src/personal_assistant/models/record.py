@@ -70,7 +70,7 @@ class Record:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Record":
+    def from_dict(cls, data: dict[str, Any]) -> Record:
         record = cls(data["name"])
         for phone in data.get("phones", []):
             record.add_phone(phone)

@@ -7,7 +7,7 @@ from personal_assistant.utils.validators import (
     validate_email,
     validate_name,
     validate_phone,
-    validate_tag
+    validate_tag,
 )
 
 
@@ -102,6 +102,7 @@ class Birthday(Field):
         if not validate_birthday(clean):
             raise ValueError(f"Birthday must be in format {DATE_FORMAT}.")
         self._value = clean
+
 
 class Tag(Field):
     def __init__(self, value: str):

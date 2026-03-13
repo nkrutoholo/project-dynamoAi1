@@ -37,6 +37,4 @@ COMMANDS = [
     "close",
 ]
 
-command_completer = FuzzyCompleter(
-    WordCompleter(COMMANDS, ignore_case=True, sentence=True)
-)
+command_completer = FuzzyCompleter(WordCompleter(COMMANDS, ignore_case=True, sentence=True))

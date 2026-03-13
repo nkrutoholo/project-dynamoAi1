@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 APP_DIR_NAME = ".personal_assistant"
 CONTACTS_FILE_NAME = "contacts.json"

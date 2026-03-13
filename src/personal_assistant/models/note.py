@@ -85,7 +85,7 @@ class Note:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Note":
+    def from_dict(cls, data: dict) -> Note:
         if not isinstance(data, dict):
             raise ValueError("Note data must be a dictionary.")
 
@@ -105,7 +105,7 @@ class Note:
         return note
 
     @classmethod
-    def sync_id_counter(cls, notes: list["Note"]) -> None:
+    def sync_id_counter(cls, notes: list[Note]) -> None:
         if not notes:
             cls._id_counter = 1
             return

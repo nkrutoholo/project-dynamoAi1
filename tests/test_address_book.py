@@ -1,7 +1,6 @@
 import pytest
 
 from personal_assistant.books.address_book import AddressBook
-from personal_assistant.models.record import Record
 
 
 class TestAddressBookCRUD:

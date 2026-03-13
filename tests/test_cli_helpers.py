@@ -1,5 +1,3 @@
-import pytest
-
 from personal_assistant.cli.command_suggester import suggest_command
 from personal_assistant.cli.parser import parse_input
 

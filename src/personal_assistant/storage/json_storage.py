@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 import json
 from pathlib import Path
 from typing import Any
 
-from personal_assistant.constants import get_contacts_file, get_data_dir, get_history_file, get_notes_file
 from personal_assistant.books.address_book import AddressBook
 from personal_assistant.books.notes_book import NotesBook
+from personal_assistant.constants import get_contacts_file, get_data_dir, get_history_file, get_notes_file
 
 
 class JsonStorage:
