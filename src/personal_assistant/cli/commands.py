@@ -8,11 +8,13 @@ from personal_assistant.books.notes_book import NotesBook
 from personal_assistant.storage.json_storage import JsonStorage
 from personal_assistant.models.record import Record
 from personal_assistant.utils.decorators import input_error
-from personal_assistant.utils.formatters import format_contacts
+from personal_assistant.models.note import Note
+from personal_assistant.utils.formatters import format_contacts, format_notes
 from personal_assistant.utils.validators import (
     validate_birthday,
     validate_email,
     validate_phone,
+    validate_note_id,
 )
 
 console = Console()
@@ -286,3 +288,210 @@ def birthdays(args: list[str]) -> str:
 
     results = address_book.get_upcoming_birthdays(int(days_raw))
     return format_contacts(results)
+
+
+def _get_note_by_id(note_id_raw: str) -> Note:
+    validated_id = validate_note_id(note_id_raw)
+    note = notes_book.get_note_by_id(validated_id)
+    if not note:
+        raise KeyError("Note not found.")
+    return note
+
+
+@input_error
+def add_note(args: list[str]) -> str:
+    text = args[0].strip() if len(args) > 0 else None
+    raw_tags = [arg.strip() for arg in args[1:]] if len(args) > 1 else []
+
+    if not text:
+        text = prompt_required_field("Text: ")
+
+    if not raw_tags:
+        tags_input = _prompt_with_cancel("Tags (space separated, optional): ")
+        raw_tags = [t.strip() for t in tags_input.split() if t.strip()]
+
+    note = Note(text=text, tags=raw_tags if raw_tags else None)
+    notes_book.add_note(note)
+    return f"Note added with ID {note.id}."
+
+
+@input_error
+def show_note(args: list[str]) -> str:
+    if not args:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+    return str(note)
+
+
+@input_error
+def edit_note(args: list[str]) -> str:
+    if not args:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+
+    console.print(f"[dim]Current text: {note.text}[/dim]")
+    new_text = _prompt_with_cancel("New text (leave empty to keep): ")
+
+    tags_str = ", ".join(tag.value for tag in note.tags) if note.tags else "-"
+    console.print(f"[dim]Current tags: {tags_str}[/dim]")
+    new_tags_input = _prompt_with_cancel("New tags (space separated, leave empty to keep): ")
+
+    changed = False
+
+    if new_text:
+        note.text = new_text
+        changed = True
+
+    if new_tags_input:
+        new_tags = [t.strip() for t in new_tags_input.split() if t.strip()]
+        for tag in list(note.tags):
+            note.delete_tag(tag.value)
+        for tag in new_tags:
+            note.add_tag(tag)
+        changed = True
+
+    if not changed:
+        return "Nothing changed."
+
+    return f"Note {note.id} updated."
+
+
+@input_error
+def delete_note(args: list[str]) -> str:
+    if not args:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    validated_id = validate_note_id(note_id_raw)
+    if not notes_book.delete_note(validated_id):
+        raise KeyError("Note not found.")
+    return f"Note {validated_id} deleted."
+
+
+@input_error
+def all_notes(_: list[str]) -> str:
+    return format_notes(notes_book.all_notes())
+
+
+@input_error
+def find_note(args: list[str]) -> str:
+    if not args:
+        query = prompt_required_field("Search query: ")
+    else:
+        query = " ".join(args).strip()
+
+    results = notes_book.find_notes(query)
+    return format_notes(results)
+
+
+@input_error
+def add_tag(args: list[str]) -> str:
+    if not args:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+    raw_tags = [arg.strip() for arg in args[1:]] if len(args) > 1 else []
+
+    if not raw_tags:
+        tags_input = prompt_required_field("Tags (space separated): ")
+        raw_tags = [t.strip() for t in tags_input.split() if t.strip()]
+
+    for tag in raw_tags:
+        note.add_tag(tag)
+
+    return f"Tags added to note {note.id}."
+
+
+@input_error
+def delete_tag(args: list[str]) -> str:
+    if len(args) < 1:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+
+    if len(args) < 2:
+        tag = prompt_required_field("Tag to delete: ")
+    else:
+        tag = args[1].strip()
+
+    if not note.delete_tag(tag):
+        raise ValueError(f"Tag '{tag}' not found on note {note.id}.")
+    return f"Tag '{tag}' deleted from note {note.id}."
+
+
+@input_error
+def change_tag(args: list[str]) -> str:
+    if len(args) < 1:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+
+    if len(args) < 2:
+        old_tag = prompt_required_field("Old tag: ")
+    else:
+        old_tag = args[1].strip()
+
+    if len(args) < 3:
+        new_tag = prompt_required_field("New tag: ")
+    else:
+        new_tag = args[2].strip()
+
+    if not note.change_tag(old_tag, new_tag):
+        raise ValueError(f"Tag '{old_tag}' not found on note {note.id}.")
+    return f"Tag changed from '{old_tag}' to '{new_tag}' on note {note.id}."
+
+
+@input_error
+def has_tag(args: list[str]) -> str:
+    if len(args) < 1:
+        note_id_raw = prompt_required_field("Note ID: ")
+    else:
+        note_id_raw = args[0].strip()
+
+    note = _get_note_by_id(note_id_raw)
+
+    if len(args) < 2:
+        tag = prompt_required_field("Tag: ")
+    else:
+        tag = args[1].strip()
+
+    if note.has_tag(tag):
+        return f"Note {note.id} has tag '{tag}'."
+    return f"Note {note.id} does not have tag '{tag}'."
+
+
+@input_error
+def find_by_tag(args: list[str]) -> str:
+    if not args:
+        tag = prompt_required_field("Tag: ")
+    else:
+        tag = args[0].strip()
+
+    results = notes_book.find_by_tag(tag)
+    return format_notes(results)
+
+
+@input_error
+def sort_notes_by_tags(_: list[str]) -> str:
+    notes = notes_book.all_notes()
+    sorted_notes = sorted(
+        notes,
+        key=lambda n: (
+            tuple(t.value for t in sorted(n.tags, key=lambda t: t.value)),
+            n.id,
+        ),
+    )
+    return format_notes(sorted_notes)
