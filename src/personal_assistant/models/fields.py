@@ -101,4 +101,3 @@ class Birthday(Field):
         if not validate_birthday(clean):
             raise ValueError(f"Birthday must be in format {DATE_FORMAT}.")
         self._value = clean
-  
