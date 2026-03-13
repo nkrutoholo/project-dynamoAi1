@@ -31,3 +31,76 @@ def validate_birthday(date_str: str) -> bool:
         return dt <= datetime.now().date()
     except ValueError:
         return False
+    
+def validate_note_text(value: str) -> str:    
+    if not isinstance(value, str):
+        raise ValueError("Note text must be a string.")
+
+    normalized = value.strip()
+
+    if not normalized:
+        raise ValueError("Note text can't be empty.")
+
+    if len(normalized) > 500:
+        raise ValueError("Note text is too long. Maximum length is 500 characters.")
+
+    return normalized
+
+
+def validate_tag(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("Tag must be a string.")
+
+    normalized = value.strip().lower()
+
+    if not normalized:
+        raise ValueError("Tag can't be empty.")
+
+    if len(normalized) > 30:
+        raise ValueError("Tag is too long. Maximum length is 30 characters.")
+
+    if not re.fullmatch(r"[a-zA-Zа-яА-ЯіїєґІЇЄҐ0-9_-]+", normalized):
+        raise ValueError(
+            "Tag may contain only letters, digits, underscore and hyphen."
+        )
+
+    return normalized
+
+
+def validate_note_id(value: str | int) -> int:
+    if isinstance(value, int):
+        note_id = value
+    elif isinstance(value, str):
+        value = value.strip()
+        if not value:
+            raise ValueError("Note ID can't be empty.")
+        try:
+            note_id = int(value)
+        except ValueError:
+            raise ValueError("Note ID must be a number.")
+    else:
+        raise ValueError("Note ID must be a number.")
+
+    if note_id <= 0:
+        raise ValueError("Note ID must be greater than zero.")
+
+    return note_id
+
+
+def validate_tags_list(tags: list[str] | None) -> list[str]:
+    if tags is None:
+        return []
+
+    if not isinstance(tags, list):
+        raise ValueError("Tags must be provided as a list.")
+
+    normalized_tags: list[str] = []
+    seen: set[str] = set()
+
+    for tag in tags:
+        normalized = validate_tag(tag)
+        if normalized not in seen:
+            normalized_tags.append(normalized)
+            seen.add(normalized)
+
+    return normalized_tags

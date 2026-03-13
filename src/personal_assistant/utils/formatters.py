@@ -27,19 +27,6 @@ def format_contacts(contacts: Iterable) -> str:
 
 def format_notes(notes: Iterable) -> str:
     notes = list(notes)
-
     if not notes:
         return "No notes found."
-
-    lines = []
-    for item in notes:
-        if isinstance(item, tuple) and len(item) == 2:
-            note_id, note = item
-            tags = ", ".join(note.tags) if getattr(note, "tags", None) else "-"
-            lines.append(f"ID: {note_id} | Text: {note.text} | Tags: {tags}")
-        else:
-            note = item
-            tags = ", ".join(note.tags) if getattr(note, "tags", None) else "-"
-            lines.append(f"Text: {note.text} | Tags: {tags}")
-
-    return "\n".join(lines)
+    return "\n".join(str(note) for note in notes)
