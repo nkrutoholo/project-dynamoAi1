@@ -5,10 +5,13 @@ from rich.console import Console
 
 from personal_assistant.books.address_book import AddressBook
 from personal_assistant.books.notes_book import NotesBook
+from personal_assistant.cli.parser import parse_input
+from personal_assistant.cli.command_suggester import suggest_command
+from personal_assistant.cli.completer import command_completer
 from personal_assistant.storage.json_storage import JsonStorage
 from personal_assistant.models.record import Record
-from personal_assistant.utils.decorators import input_error
 from personal_assistant.models.note import Note
+from personal_assistant.utils.decorators import input_error
 from personal_assistant.utils.formatters import format_contacts, format_notes
 from personal_assistant.utils.validators import (
     validate_birthday,
@@ -495,3 +498,110 @@ def sort_notes_by_tags(_: list[str]) -> str:
         ),
     )
     return format_notes(sorted_notes)
+
+
+def show_help() -> None:
+    console.print("[bold cyan]Personal Assistant[/bold cyan]")
+    console.print("Available commands:")
+    console.print("  help")
+    console.print("  add-contact <name> <phone>")
+    console.print("  show-contact <name>")
+    console.print("  edit-contact <old_name> <new_name>")
+    console.print("  delete-contact <name>")
+    console.print("  all-contacts")
+    console.print("  find-contact <query>")
+    console.print("  add-phone <name> <phone>")
+    console.print("  edit-phone <name> <old_phone> <new_phone>")
+    console.print("  remove-phone <name> <phone>")
+    console.print("  add-email <name> <email>")
+    console.print("  edit-email <name> <email>")
+    console.print("  add-address <name> <address>")
+    console.print("  edit-address <name> <address>")
+    console.print("  add-birthday <name> <birthday: DD.MM.YYYY>")
+    console.print("  edit-birthday <name> <birthday: DD.MM.YYYY>")
+    console.print("  birthdays <days>")
+    console.print('  add-note "<text>" [tag1] [tag2] ...')
+    console.print("  show-note <id>")
+    console.print("  edit-note <id>")
+    console.print("  delete-note <id>")
+    console.print("  all-notes")
+    console.print("  find-note <query>")
+    console.print("  add-tag <id> <tag1> [tag2] ...")
+    console.print("  delete-tag <id> <tag>")
+    console.print("  change-tag <id> <old_tag> <new_tag>")
+    console.print("  has-tag <id> <tag>")
+    console.print("  find-by-tag <tag>")
+    console.print("  sort-notes-by-tags")
+    console.print("  exit | quit | close")
+    console.print("[dim]Tip: press Esc while entering a field to cancel the current command.[/dim]")
+
+
+def _save_all() -> None:
+    JsonStorage.save_address_book(address_book)
+    JsonStorage.save_notes_book(notes_book)
+
+
+def run_cli() -> None:
+    global address_book, notes_book
+    address_book = JsonStorage.load_address_book()
+    notes_book = JsonStorage.load_notes_book()
+
+    show_help()
+
+    handlers = {
+        "help": lambda _: (show_help() or ""),
+        "add-contact": add_contact,
+        "show-contact": show_contact,
+        "edit-contact": edit_contact,
+        "delete-contact": delete_contact,
+        "all-contacts": all_contacts,
+        "find-contact": find_contact,
+        "add-phone": add_phone,
+        "edit-phone": edit_phone,
+        "remove-phone": remove_phone,
+        "add-email": add_email,
+        "edit-email": edit_email,
+        "add-address": add_address,
+        "edit-address": edit_address,
+        "add-birthday": add_birthday,
+        "edit-birthday": edit_birthday,
+        "birthdays": birthdays,
+        "add-note": add_note,
+        "show-note": show_note,
+        "edit-note": edit_note,
+        "delete-note": delete_note,
+        "all-notes": all_notes,
+        "find-note": find_note,
+        "add-tag": add_tag,
+        "delete-tag": delete_tag,
+        "change-tag": change_tag,
+        "has-tag": has_tag,
+        "find-by-tag": find_by_tag,
+        "sort-notes-by-tags": sort_notes_by_tags,
+    }
+
+    while True:
+        user_input = prompt(">>> ", completer=command_completer, history=history)
+        command, args = parse_input(user_input)
+
+        if not command:
+            continue
+
+        if command in ("exit", "quit", "close"):
+            _save_all()
+            console.print("[bold red]Good bye![/bold red]")
+            break
+
+        handler = handlers.get(command)
+        if handler:
+            result = handler(args)
+            if result:
+                console.print(result)
+            _save_all()
+            continue
+
+        suggested = suggest_command(command)
+        if suggested:
+            console.print(f"[yellow]Unknown command. Did you mean:[/yellow] [bold]{suggested}[/bold]?")
+        else:
+            console.print("[red]Unknown command.[/red]")
