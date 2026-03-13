@@ -25,8 +25,9 @@ def validate_email(email: str) -> bool:
 
 
 def validate_birthday(date_str: str) -> bool:
+    """Birthday must be in DD.MM.YYYY format and not in the future."""
     try:
-        datetime.strptime(date_str.strip(), DATE_FORMAT)
-        return True
+        dt = datetime.strptime(date_str.strip(), DATE_FORMAT).date()
+        return dt <= datetime.now().date()
     except ValueError:
         return False
