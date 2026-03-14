@@ -39,9 +39,17 @@ class AddressBook(UserDict):
             if not record.birthday:
                 continue
             birthday = datetime.strptime(record.birthday.value, DATE_FORMAT).date()
-            nearest = birthday.replace(year=today.year)
+            try:
+                nearest = birthday.replace(year=today.year)
+            except ValueError:
+                # Birthday on Feb 29: use Feb 28 in non-leap years
+                nearest = birthday.replace(year=today.year, day=28)
             if nearest < today:
-                nearest = nearest.replace(year=today.year + 1)
+                try:
+                    nearest = nearest.replace(year=today.year + 1)
+                except ValueError:
+                    # Birthday on Feb 29: use Feb 28 in non-leap year
+                    nearest = nearest.replace(year=today.year + 1, day=28)
             delta = (nearest - today).days
             if 0 <= delta <= days:
                 upcoming.append(record)
