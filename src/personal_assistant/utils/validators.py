@@ -20,7 +20,7 @@ def validate_phone(phone: str) -> bool:
 
 
 def validate_email(email: str) -> bool:
-    pattern = r"^[\w.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$"
+    pattern = r"^[\w.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$"
     return bool(re.fullmatch(pattern, email.strip()))
 
 
