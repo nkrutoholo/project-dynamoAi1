@@ -59,6 +59,10 @@ class TestEmail:
     def test_strips_whitespace(self):
         assert Email("  user@example.com  ").value == "user@example.com"
 
+    def test_wrong_domain_raises(self):
+        with pytest.raises(ValueError):
+            Email("tim.bim@gmail.0")
+
 
 class TestAddress:
     def test_valid(self):
