@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "personal-assistant"
+version = "1.0.0"
+description = "CLI assistant for managing contacts and notes"
+requires-python = ">=3.11"
+dependencies = [
+    "rich",
+    "prompt_toolkit",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+personal-assistant = "personal_assistant.cli.commands:run_cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "F",     # pyflakes
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "I",     # isort
+    "UP",    # pyupgrade
+    "RUF",   # ruff-specific
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["personal_assistant"]
