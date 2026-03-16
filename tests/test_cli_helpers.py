@@ -19,7 +19,7 @@ class TestParser:
         assert args == []
 
     def test_command_lowercased(self):
-        cmd, args = parse_input("ADD-CONTACT John")
+        cmd, _ = parse_input("ADD-CONTACT John")
         assert cmd == "add-contact"
 
     def test_single_command_no_args(self):

@@ -85,6 +85,5 @@ class Record:
         address = self.address.value if self.address else "-"
         birthday = self.birthday.value if self.birthday else "-"
         return (
-            f"Name: {self.name.value} | Phones: {phones} | Email: {email} | "
-            f"Address: {address} | Birthday: {birthday}"
+            f"Name: {self.name.value} | Phones: {phones} | Email: {email} | Address: {address} | Birthday: {birthday}"
         )

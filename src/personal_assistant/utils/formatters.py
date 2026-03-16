@@ -15,11 +15,7 @@ def format_contacts(contacts: Iterable) -> str:
         birthday = record.birthday.value if getattr(record, "birthday", None) else "-"
 
         lines.append(
-            f"Name: {record.name.value} | "
-            f"Phones: {phones} | "
-            f"Email: {email} | "
-            f"Address: {address} | "
-            f"Birthday: {birthday}"
+            f"Name: {record.name.value} | Phones: {phones} | Email: {email} | Address: {address} | Birthday: {birthday}"
         )
 
     return "\n".join(lines)

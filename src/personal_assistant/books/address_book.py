@@ -29,12 +29,12 @@ class AddressBook(UserDict):
 
     def all_records(self) -> list[Record]:
         return sorted(self.data.values(), key=lambda item: item.name.value.lower())
-    
+
     def _replace_year(self, d: date, year: int) -> date:
         try:
             return d.replace(year=year)
         except ValueError:
-            return d.replace(year=year, day=28) # Birthday on Feb 29: use Feb 28 in non-leap years
+            return d.replace(year=year, day=28)  # Birthday on Feb 29: use Feb 28 in non-leap years
 
     def get_upcoming_birthdays(self, days: int) -> list[Record]:
         if days < 0:

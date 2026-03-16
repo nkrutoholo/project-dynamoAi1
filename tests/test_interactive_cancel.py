@@ -12,7 +12,8 @@ def app(tmp_path, monkeypatch):
 
 
 def test_prompt_with_cancel_raises(app):
-    with pytest.raises(ValueError, match="Input cancelled."):
+    match_text = "Input cancelled."
+    with pytest.raises(ValueError, match=match_text):
         app._prompt_with_cancel("Name: ")
 
 

@@ -593,7 +593,7 @@ class App:
         self._show_help()
 
         handlers = {
-            "help": lambda _: (self._show_help() or ""),
+            "help": lambda _: self._show_help() or "",
             "add-contact": self.add_contact,
             "show-contact": self.show_contact,
             "edit-contact": self.edit_contact,
